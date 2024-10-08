@@ -1,0 +1,72 @@
+html
+Copy
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>게시글 보기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6f3ff;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #0066cc;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            margin: 10px 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            background-color: #4da6ff;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0066cc;
+        }
+        .btn-delete {
+            background-color: #ff6666;
+        }
+        .btn-delete:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="${board.title}"></h1>
+		<td th:text="${board.createdDate}"></td>
+        <p>작성자: <span th:text="${board.author}"></span></p>
+        <p>작성일: <span th:text="${board.createdDate != null ? #temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm') : '날짜 정보 없음'}"></span></p>
+        <div class="content" th:text="${board.content}"></div>
+        <div>
+            <a th:href="@{/board/{id}/edit(id=${board.id})}" class="btn">수정</a>
+            <a th:href="@{/board/{id}/delete(id=${board.id})}" class="btn btn-delete" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
+            <a th:href="@{/board/list}" class="btn">목록으로</a>
+        </div>
+    </div>
+</body>
+</html>

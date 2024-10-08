@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>게시판 목록</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .search-form {
+            margin-bottom: 20px;
+        }
+        .search-form input[type="text"] {
+            width: 70%;
+            padding: 5px;
+        }
+        .search-form button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .pagination li {
+            margin: 0 5px;
+        }
+        .pagination a {
+            text-decoration: none;
+            color: #333;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .pagination .active a {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .write-btn {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>게시판 목록</h1>
+        
+        <form class="search-form" th:action="@{/board/list}" method="get">
+            <input type="text" name="searchKeyword" th:value="${searchKeyword}" placeholder="제목 검색...">
+            <button type="submit">검색</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>작성일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="board, iterStat : ${boards}">
+                    <td th:text="${boards.totalElements - boards.number * boards.size - iterStat.index}"></td>
+                    <td><a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.title}"></a></td>
+                    <td th:text="${board.author}"></td>
+                    <td th:text="${board.createdDate != null ? #temporals.format(board.createdDate, 'yyyy-MM-dd') : ''}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <ul class="pagination" th:if="${boards.totalPages > 0}">
+            <li th:class="${!boards.hasPrevious()} ? 'disabled'">
+                <a th:if="${boards.hasPrevious()}" th:href="@{/board/list(page=${boards.number - 1}, searchKeyword=${searchKeyword})}">&laquo; 이전</a>
+                <span th:unless="${boards.hasPrevious()}">&laquo; 이전</span>
+            </li>
+            <li th:each="pageNumber : ${#numbers.sequence(0, boards.totalPages - 1)}"
+                th:class="${pageNumber == boards.number} ? 'active'">
+                <a th:href="@{/board/list(page=${pageNumber}, searchKeyword=${searchKeyword})}" th:text="${pageNumber + 1}"></a>
+            </li>
+            <li th:class="${!boards.hasNext()} ? 'disabled'">
+                <a th:if="${boards.hasNext()}" th:href="@{/board/list(page=${boards.number + 1}, searchKeyword=${searchKeyword})}">다음 &raquo;</a>
+                <span th:unless="${boards.hasNext()}">다음 &raquo;</span>
+            </li>
+        </ul>
+
+        <a href="/board/new" class="write-btn">글쓰기</a>
+    </div>
+</body>
+</html>
